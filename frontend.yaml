@@ -3,7 +3,7 @@
 # 2. remove default content in our nginx server
 # 3. Download the frontend content
 # 4. Extract the frontend content
-# 5. create nginx reverse proxy configuration
+# 5. create nginx reverse proxy configuration (expense.conf)
 # 6. Restart the nginx service
 
 - name: configure frontend
