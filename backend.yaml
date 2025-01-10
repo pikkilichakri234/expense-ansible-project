@@ -71,18 +71,18 @@
       executable: pip3.9
 
   - name: Import MySQL data
-  community.mysql.mysql_db:
-    state: import
-    name: expense_db # Replace with your database name
-    target: /app/schema/backend.sql # Replace with the path to your SQL file
-    login_host: "{{ login_host }}"
-    login_user: root
-    login_password: "{{ mysql_root_password }}"
-
-
-
-  - name: daemon reload
-    ansible.builtin.systemd_service:
+    community.mysql.mysql_db:
+      state: import
+      name: expense_db # Replace with your database name
+      target: /app/schema/backend.sql # Replace with the path to your SQL file
+      login_host: "{{ login_host }}"
+      login_user: root
+      login_password: "{{ mysql_root_password }}"
+       
+  - name: Reload systemd daemon and restart the backend service
+    ansible.builtin.systemd:
       daemon_reload: true
       state: restarted
       name: backend
+
+  
