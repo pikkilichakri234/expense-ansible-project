@@ -1,0 +1,90 @@
+# Algorithm:
+# 1. To list dnf modules (disable, enable) use install node.js
+# 2. add application user
+# 3. create /app directory
+# 4. to download the application code
+# 5. unzip the application code
+# 6. to download dependencies
+# 7. setup systemd service for backend server
+# 8. load the service
+# 9. start the service
+# 10. to install mysql-client
+# 11. load schema
+# 12. restart the service
+
+- name: configure backend server
+  hosts: backend
+  become: yes
+  vars:
+    mysql_root_password: om123
+    mysql_login: mysql.omnamahashivaya.online
+  tasks:
+  - name: disable default node.js
+    ansible.builtin.command: dnf module disable node.js -y
+  
+  - name: enable node.js:20
+    ansible.builtin.command: dnf module enable node.js -y
+
+  - name: install nodejs
+    ansible.builtin.package:
+      name: "{{ item }}"
+      state: present
+    loop:
+    - nodejs
+    - mysql
+
+  - name: create expense user
+    ansible.builtin.user:
+      name: omnamahashivaya
+
+  - name: create app directory
+    ansible.builtin.file:
+      path: /app
+      state: directory
+    
+  - name: to download the code
+    ansible.builtin.get_url:
+      url: https://expense-builds.s3.us-east-1.amazonaws.com/expense-backend-v2.zip
+      dest: /tmp/backend.zip
+
+  - name: to extract the code
+    ansible.builtin.unarchive:
+      src: /tmp/backend.zip
+      dest: /app
+      remote_src: yes
+
+  - name: install dependencies
+    ansible.builtin.command: npm install
+      args:
+        chdir: /app
+
+ - name: copy backend service
+   ansible.builtin.copy:
+     src: backend.service
+     dest: /etc/systemd/system/backend.service
+
+ - name: ansible to install pymysql
+    ansible.builtin.pip:
+      name:
+      - PyMySQL
+      - cryptography
+      executable: pip3.9
+  
+   - name: import mysql data
+    community.mysql.mysql_db:
+      login_user: root
+      login_password: "{{ mysql_root_password }}"
+      login_host: "{{ login_host }}"
+      target: /app/schema/backend.sql
+      name: all
+      state: import
+
+  - name: daemon reload
+    ansible.builtin.systemd_service:
+      daemon_reload: true
+      state: restarted
+      name: backend
+  
+
+
+  

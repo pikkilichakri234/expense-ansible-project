@@ -1,0 +1,49 @@
+# Alogrithm steps:
+# 1. create & install mysql-server (by default create mysql-client) and install mysql libraries 
+# 2. start and enable the service
+# 3. to setup the mysql password to connect the server
+# 4. to login mysql-server (with host, username, password)
+# 5. once login to the mysql-server perform actions
+
+- name: to set install and configure mysql-server used ansible tool
+  hosts: mysql
+  become: yes
+  vars:
+    mysql_root_password: om123
+  tasks:
+  - name: install mysql libraries
+    ansible.builtin.pip:
+      name: "{{ item }}"
+      executable: pip3.9
+    loop:
+    - cryptography
+    - pyMySQL
+
+  - name: install mysql-server
+    ansible.builtin.package:
+      name: mysql-server
+      state: installed
+
+  - name: start and enable the service
+    ansible.builtin.service:
+      name: mysqld
+      state: started
+      enabled: yes
+
+  - name:  to connect the mysql-server
+    community.mysql.mysql_info:
+      login_user: root
+      login_password: "{{ mysql_root_password}}"
+      login_host: mysql.omnamahashivaya.online
+    register: mysql_info
+    ignore_errors: yes
+
+  - name: to print the output
+    ansible.builtin.debug:
+      msg: "mysql info is:{{ mysql_info }}"
+
+  - name: setup mysql root password
+    ansible.builtin.command: "mysql_secure_installation --set-root-pass {{ mysql_root_password }}"
+    when: mysql_info.failed is true  #mysql service check failed
+
+
