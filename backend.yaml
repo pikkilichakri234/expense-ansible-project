@@ -51,7 +51,7 @@
     ansible.builtin.unarchive:
       src: /tmp/backend.zip #by default ansible thinks this is in ansible server
       dest: /app
-      remote_src: yes
+      remote_src: yes #ansible by default thinks src is in ansible controll machine.
 
   - name: install dependencies
     ansible.builtin.command: npm install
@@ -73,16 +73,16 @@
   - name: Import MySQL data
     community.mysql.mysql_db:
       state: import
-      name: expense_db # Replace with your database name
+      name: all # Replace with your database name
       target: /app/schema/backend.sql # Replace with the path to your SQL file
       login_host: "{{ login_host }}"
       login_user: root
       login_password: "{{ mysql_root_password }}"
        
-  - name: Reload systemd daemon and restart the backend service
-    ansible.builtin.systemd:
-      daemon_reload: true
+  - name: daemon reload and restart service
+    ansible.builtin.systemd_service:
+      enabled: true
       state: restarted
+      daemon_reload: true
       name: backend
-
   
