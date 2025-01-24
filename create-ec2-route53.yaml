@@ -44,7 +44,7 @@
       record: "{{item.item}}.{{ zone}}" # mysql.omnamahashivaya.online   # item.item= access the names of the (mysql, backend, frontend) stored in the item key of the dictionary
       type: A
       ttl: 1
-      value: "{{ item.instances{0].private_ip_address }}"
+      value: "{{ item.instances[0].private_ip_address }}"
       wait: true
       overwrite: true
     loop: "{{ ec2_instances.results }}"
