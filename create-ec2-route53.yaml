@@ -2,8 +2,8 @@
   hosts: local
   connection: local
   vars:
-    subnet_id: "subnet-05e20b3a550ac9cab"  #replace with your subnet-id
-    sg_id: "sg-001ef9d79c9440437" ##replace with your security-group-id
+    subnet_id: "subnet-047e08559d038fe71"  #replace with your subnet-id
+    sg_id: "sg-09b2bd8a1bb8431db" ##replace with your security-group-id
     ami_id: "ami-09c813fb71547fc4f"
     instances:
     - frontend
@@ -31,6 +31,11 @@
   - name: print the output
     ansible.builtin.debug:
       msg: to create instances is :: "{{ ec2_instances }}"
+  
+  - name:  print private ip address
+    ansible.builtin.debug:
+      msg: "{{ item.instances[0].private_ip_addres }}"
+    loop: "{{ ec2_instances.results }}"
 
   - name: create route53 private records
     amazon.aws.route53:
@@ -39,7 +44,7 @@
       record: "{{item.item}}.{{ zone}}" # mysql.omnamahashivaya.online   # item.item= access the names of the (mysql, backend, frontend) stored in the item key of the dictionary
       type: A
       ttl: 1
-      value: "{{item.instances{0].private_ip_address}}"
+      value: "{{ item.instances{0].private_ip_address }}"
       wait: true
       overwrite: true
     loop: "{{ ec2_instances.results }}"
