@@ -49,7 +49,7 @@
       overwrite: true
     loop: "{{ ec2_instances.results }}"
 
-  - name: create route53 public records
+  - name: create route53 public records for frontend
     amazon.aws.route53:
       state: present
       zone: "{{ zone }}" #omnamahashivaya.online
@@ -62,6 +62,8 @@
     loop: "{{ ec2_instances.results }}"
     when: item.item == "frontend" # when keyword should not have {{}}
 
+
+  
 
 # item.item= access the names of the instances (mysql, backend, frontend) stored in the item key of the dictionary
     
