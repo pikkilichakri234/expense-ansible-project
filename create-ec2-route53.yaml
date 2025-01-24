@@ -30,7 +30,7 @@
 
   - name: print the output
     ansible.builtin.debug:
-      msg: to create instances is :: "{{ ec2_instances }}"
+      msg: to create instances is "{{ ec2_instances }}"
   
   - name:  print private ip address
     ansible.builtin.debug:
