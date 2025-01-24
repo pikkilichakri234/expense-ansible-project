@@ -32,10 +32,10 @@
     ansible.builtin.debug:
       msg: to create instances is "{{ ec2_instances }}"
   
-  - name:  print private ip address
-    ansible.builtin.debug:
-      msg: "{{ item.instances[0].private_ip_addres }}"
-    loop: "{{ ec2_instances.results }}"
+  # - name:  print private ip address
+  #   ansible.builtin.debug:
+  #     msg: "{{ item.instances[0].private_ip_addres }}"
+  #   loop: "{{ ec2_instances.results }}"
 
   - name: create route53 private records
     amazon.aws.route53:
